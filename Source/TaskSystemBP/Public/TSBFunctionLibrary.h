@@ -27,8 +27,8 @@ public:
 		UObject* WorldContextObject,
 		const TSubclassOf<UTSBTaskObject>& TaskClass,
 		const TArray<FTSBTaskHandle>& Prerequisites,
-		const FTSBPipe& Pipe = FTSBPipe(),
-		const ETSBThreadingPolicy InThreadingPolicy = ETSBThreadingPolicy::GameThreadNormalPriority);
+		const FInstancedStruct& TaskArguments,
+		const FTSBPipe& Pipe = FTSBPipe(), const ETSBThreadingPolicy InThreadingPolicy = ETSBThreadingPolicy::GameThreadNormalPriority);
 
 	UFUNCTION(BlueprintCallable, Category = "TaskSystem",
 		meta = (AutoCreateRefTerm = "Pipe,Prerequisites", AdvancedDisplay = "Pipe,InThreadingPolicy",
@@ -36,8 +36,8 @@ public:
 	static FTSBTaskHandle LaunchTaskObject(
 		UTSBTaskObject* TaskObject,
 		const TArray<FTSBTaskHandle>& Prerequisites,
-		const FTSBPipe& Pipe = FTSBPipe(),
-		const ETSBThreadingPolicy InThreadingPolicy = ETSBThreadingPolicy::GameThreadNormalPriority);
+		const FInstancedStruct& TaskArguments,
+		const FTSBPipe& Pipe = FTSBPipe(), const ETSBThreadingPolicy InThreadingPolicy = ETSBThreadingPolicy::GameThreadNormalPriority);
 
 	UFUNCTION(BlueprintCallable, Category = "TaskSystem",
 		meta = (AutoCreateRefTerm = "Pipe,Prerequisites", AdvancedDisplay = "Pipe,InThreadingPolicy",

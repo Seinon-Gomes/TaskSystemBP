@@ -17,8 +17,8 @@ using namespace TaskSystemBP;
 FTSBTaskHandle UTSBFunctionLibrary::LaunchTaskClass(UObject* WorldContextObject,
                                                     const TSubclassOf<UTSBTaskObject>& TaskClass,
                                                     const TArray<FTSBTaskHandle>& Prerequisites,
-                                                    const FTSBPipe& Pipe,
-                                                    const ETSBThreadingPolicy InThreadingPolicy)
+                                                    const FInstancedStruct& TaskArguments,
+                                                    const FTSBPipe& Pipe, const ETSBThreadingPolicy InThreadingPolicy)
 {
 	UTSBTaskObject* CDO = TaskClass->GetDefaultObject<UTSBTaskObject>();
 	if (!IsValid(CDO))
@@ -29,12 +29,12 @@ FTSBTaskHandle UTSBFunctionLibrary::LaunchTaskClass(UObject* WorldContextObject,
 	const ETSBInstancingPolicy& InstancingPolicy = CDO->InstancingPolicy;
 	if (InstancingPolicy == ETSBInstancingPolicy::NoInstance)
 	{
-		return LaunchTaskObject(CDO, Prerequisites, Pipe, InThreadingPolicy);
+		return LaunchTaskObject(CDO, Prerequisites, TaskArguments, Pipe, InThreadingPolicy);
 	}
 	if (InstancingPolicy == ETSBInstancingPolicy::InstantiatePerExecution)
 	{
 		UTSBTaskObject* TaskObject = NewObject<UTSBTaskObject>(WorldContextObject, TaskClass);
-		return LaunchTaskObject(TaskObject, Prerequisites, Pipe, InThreadingPolicy);
+		return LaunchTaskObject(TaskObject, Prerequisites, TaskArguments, Pipe, InThreadingPolicy);
 	}
 
 	return FTSBTaskHandle{};
@@ -42,13 +42,15 @@ FTSBTaskHandle UTSBFunctionLibrary::LaunchTaskClass(UObject* WorldContextObject,
 
 FTSBTaskHandle UTSBFunctionLibrary::LaunchTaskObject(UTSBTaskObject* TaskObject,
                                                      const TArray<FTSBTaskHandle>& Prerequisites,
-                                                     const FTSBPipe& Pipe,
-                                                     const ETSBThreadingPolicy InThreadingPolicy)
+                                                     const FInstancedStruct& TaskArguments,
+                                                     const FTSBPipe& Pipe, const ETSBThreadingPolicy InThreadingPolicy)
 {
 	if (!IsValid(TaskObject))
 	{
 		return FTSBTaskHandle{};
 	}
+
+	TaskObject->SetTaskArguments(TaskArguments);
 
 	auto InternalTask = [TaskObject, InThreadingPolicy]
 	{

@@ -25,11 +25,19 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Task System")
 	ETSBInstancingPolicy InstancingPolicy;
 
+	void SetTaskArguments(const FInstancedStruct& InTaskArguments);
+
 #if WITH_EDITOR
 	virtual bool ImplementsGetWorld() const override;
 #endif
 
+protected:
+	UFUNCTION(BlueprintPure, Category = "Task System")
+	FInstancedStruct GetTaskArguments() const;
+	
 private:
 	UPROPERTY()
 	FTSBTaskResult TaskResult;
+	
+	FInstancedStruct TaskArguments;
 };
